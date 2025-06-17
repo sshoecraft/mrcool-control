@@ -114,7 +114,7 @@ python3 enhanced_gree_controller.py --status
 ### ✅ Advanced Refrigerant Circuit Control
 - **Compressor capacity modulation** - Variable speed control
 - **Refrigerant flow control** - Electronic expansion valve
-- **Heat/Cool mode switching** - Reversing valve operation
+- **Heat/Cool mode control** - Thermostat-directed operation
 - **Real-time monitoring** - Operational status feedback
 
 ### ✅ Smart Mode Detection
