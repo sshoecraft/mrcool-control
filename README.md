@@ -11,10 +11,35 @@
 Your system actually implements **dual packet formats** on the same UART connection:
 
 | Direction | Format | Size | Purpose | Example |
-|-----------|--------|------|---------|---------|
+|-----------|--------|------|---------|---------| 
 | **Query** → AC | `7e7e 02 02 [cs]` | 5 bytes | Request status | `7e7e020204` |
 | **Status** ← AC | `7e7e ff e0 [data]` | 255 bytes | Status response | `7e7effe0013c30...` |
 | **Control** → AC | `7e7e 25 01 [data]` | 40 bytes | Control command | `7e7e2501010000...` |
+
+## Key Control Scripts
+
+### 🧠 Core Scripts - Ready to Deploy
+
+- **`smart_max_performance.py`** - **★ PRIMARY CONTROL SCRIPT ★**
+  - Intelligently detects heat/cool mode via refrigerant temperature differential
+  - Sets aggressive setpoints: 18°C cooling / 30°C heating
+  - Maximizes compressor capacity, flow, and fan speed automatically
+  - **Currently running on production system**
+
+- **`enhanced_gree_controller.py`** - Complete interactive control interface
+  - Full bidirectional control with safety checks
+  - Interactive menu system for manual operation
+  - Real-time status monitoring and display
+
+- **`enhanced_gree_collector.py`** - Advanced data collection and monitoring
+  - Comprehensive protocol analysis using all research findings
+  - CSV logging with temperature correlations
+  - Real-time performance tracking
+
+- **`chiller_mode_controller.py`** - Maximum capacity chiller operation
+  - Forces sustained maximum performance with safety monitoring
+  - Continuous operation with automatic safety cutoffs
+  - Dashboard integration for enhanced monitoring
 
 ## Research Integration
 
@@ -49,37 +74,39 @@ cd mrcool-control
 
 ### Basic Usage
 ```bash
-# Check system status
-python3 tools/real_time_control.py --status
+# Run smart max performance (production script)
+python3 smart_max_performance.py
 
-# Interactive control
-python3 tools/real_time_control.py --interactive
+# Interactive control interface
+python3 enhanced_gree_controller.py
 
-# Advanced refrigerant control testing
-python3 tools/refrigerant_control_test.py
+# Start data collection
+python3 enhanced_gree_collector.py --duration 60
+
+# Check system status only
+python3 enhanced_gree_controller.py --status
 ```
 
 ## Available Tools
 
-### Control Tools
-- **`real_time_control.py`** - Complete interactive control interface
-- **`refrigerant_control_test.py`** - Advanced refrigerant circuit testing
-- **`uart_control_test.py`** - Basic bidirectional control testing
+### 🎯 Production Control Scripts
+- **`smart_max_performance.py`** - Smart mode detection and optimization
+- **`enhanced_gree_controller.py`** - Complete interactive control
+- **`enhanced_gree_collector.py`** - Advanced monitoring and logging
+- **`chiller_mode_controller.py`** - Maximum capacity operation
 
-### Analysis Tools
-- **`comprehensive_decoder.py`** - Multi-source protocol decoder
-- **`packet_analyzer.py`** - Interactive packet analysis
-- **`dashboard_integration.py`** - Dashboard correlation monitoring
-
-### Monitoring Tools
-- **`enhanced_decoder.py`** - Real-time packet monitoring
-- **`packet_capture.py`** - Raw packet capture utility
+### 🔧 Development & Testing Tools
+- **`tools/comprehensive_decoder.py`** - Multi-source protocol decoder
+- **`tools/packet_analyzer.py`** - Interactive packet analysis
+- **`tools/refrigerant_control_test.py`** - Advanced refrigerant circuit testing
+- **`tools/uart_control_test.py`** - Basic bidirectional control testing
+- **`tools/smart_max_performance.py`** - Maximum performance optimization
 
 ## Features
 
 ### ✅ Complete HVAC Control
 - **Power control** - System on/off
-- **Operating modes** - Auto/Cool/Heat/Fan/Dry
+- **Operating modes** - Auto/Cool/Heat/Fan/Dry  
 - **Temperature control** - Setpoint adjustment
 - **Fan speed control** - 0-5 speed levels
 - **Advanced features** - Turbo, X-Fan, display control
@@ -90,10 +117,11 @@ python3 tools/refrigerant_control_test.py
 - **Heat/Cool mode switching** - Reversing valve operation
 - **Real-time monitoring** - Operational status feedback
 
-### ✅ Dashboard Integration
-- **Temperature correlation** - UART ↔ Dashboard validation
-- **Real-time monitoring** - Live system status
-- **Control verification** - Command response tracking
+### ✅ Smart Mode Detection
+- **Automatic heat/cool detection** - via refrigerant temperature differential
+- **Intelligent setpoint optimization** - aggressive but safe temperature targets
+- **Maximum performance activation** - compressor, flow, and fan optimization
+- **Production-ready automation** - suitable for continuous operation
 
 ## Hardware Compatibility
 
@@ -113,6 +141,7 @@ python3 tools/refrigerant_control_test.py
 - **Confirmation prompts** - For potentially disruptive operations
 - **Error handling** - Comprehensive exception management
 - **System monitoring** - Continuous status verification
+- **Temperature differential analysis** - Smart mode detection prevents conflicts
 
 ## Documentation
 
@@ -142,4 +171,4 @@ Contributions welcome for:
 
 ---
 
-**Status**: Complete bidirectional control system ready for production use.
+**Status**: Complete bidirectional control system ready for production use with smart optimization scripts.
