@@ -39,7 +39,7 @@ Your system actually implements **dual packet formats** on the same UART connect
 - **`chiller_mode_controller.py`** - Maximum capacity chiller operation
   - Forces sustained maximum performance with safety monitoring
   - Continuous operation with automatic safety cutoffs
-  - Dashboard integration for enhanced monitoring
+  - Pure UART-based control and monitoring
 
 ## Research Integration
 
