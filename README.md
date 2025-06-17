@@ -106,10 +106,9 @@ python3 enhanced_gree_controller.py --status
 
 ### ✅ Complete HVAC Control
 - **Power control** - System on/off
-- **Operating modes** - Auto/Cool/Heat/Fan/Dry  
-- **Temperature control** - Setpoint adjustment
-- **Fan speed control** - 0-5 speed levels
-- **Advanced features** - Turbo, X-Fan, display control
+- **Operating modes** - Auto/Cool/Heat/Fan/Dry response to thermostat calls
+- **Temperature control** - Setpoint adjustment for optimal performance
+- **Fan speed control** - Outdoor unit fan speed modulation
 
 ### ✅ Advanced Refrigerant Circuit Control
 - **Compressor capacity modulation** - Variable speed control
