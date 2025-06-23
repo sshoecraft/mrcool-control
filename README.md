@@ -63,8 +63,8 @@ The only maintained script in this repository. Provides comprehensive real-time 
 python3 hvac_monitor.py <hostname/ip>
 
 # Examples:
-python3 hvac_monitor.py ac1.localdomain
-python3 hvac_monitor.py hvac.local
+python3 hvac_monitor.py 10.0.0.100
+python3 hvac_monitor.py hvac-unit.example.com
 ```
 
 Connects to HVAC unit on port 23 and displays live telemetry data. The hostname/IP argument is required.

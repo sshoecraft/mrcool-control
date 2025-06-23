@@ -323,7 +323,7 @@ def main():
     # Check for command line arguments
     if len(sys.argv) != 2:
         print("Usage: hvac_monitor.py <hostname/ip>")
-        print("Example: hvac_monitor.py ac1.localdomain")
+        print("Example: hvac_monitor.py 10.0.0.100")
         sys.exit(1)
     
     # Get hostname from command line
