@@ -46,21 +46,24 @@ While waiting for Modbus hardware, we will implement physical sensor manipulatio
 - **Method**: Peltier cooling module with precise temperature control
 - **Purpose**: Override outdoor temperature readings to force optimal operating conditions
 
-## Current Scripts and Capabilities
+## Current Monitoring Capability
 
-### Production Monitoring
-- **`hvac_monitor.py`** - Real-time system monitoring with pressure/temperature display
-- **`enhanced_gree_collector.py`** - Data logging and CSV export
-- **`smart_max_performance.py`** - Performance optimization detection
+### hvac_monitor.py
+The only maintained script in this repository. Provides comprehensive real-time monitoring via network connection to the HVAC unit:
 
-### Protocol Analysis Tools
-- **`packet_logger.py`** - Raw packet capture
-- **`analyze_packet_log.py`** - Protocol analysis and decoding
-- **`diagnostics.py`** - System troubleshooting
+**Features:**
+- Real-time pressure readings (vapor/liquid refrigerant lines)
+- Temperature monitoring across all sensors
+- System status and performance metrics
+- Automatic mode detection (Heat/Cool/Off)
+- Compact continuous display with color-coded indicators
 
-### Testing Framework
-- **`test_performance_controls.py`** - Performance parameter validation
-- **`test_persistence.py`** - Control persistence testing
+**Usage:**
+```bash
+python3 hvac_monitor.py
+```
+
+Connects to AC1 unit at 192.168.1.188:23 and displays live telemetry data.
 
 ## Hardware Setup
 
