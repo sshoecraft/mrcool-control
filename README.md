@@ -1,5 +1,8 @@
 # HVAC Control System - Mr Cool MDUO18060
 
+## System Configuration
+This project monitors and controls a Mr Cool MDUO18060 outdoor condenser unit connected to a brazed plate heat exchanger for hydronic cooling/heating applications.
+
 ## Current Status: UART Control Limitation Discovered
 
 After extensive reverse engineering and protocol analysis, we have determined that **direct UART control via the COMM port is not feasible** for full system control of the Mr Cool MDUO18060 heat pump.
@@ -20,12 +23,12 @@ After extensive reverse engineering and protocol analysis, we have determined th
 ## New Control Strategy: Modbus Gateway Integration
 
 ### Phase 1: Gree Modbus Gateway (Planned)
-We will acquire and integrate a **Gree Modbus Gateway** to connect to the **CN6 port** on the indoor unit for proper bidirectional control.
+We will acquire and integrate a **Gree Modbus Gateway** to connect to the **CN6 port** on the outdoor condenser unit for proper bidirectional control.
 
 **Hardware Requirements:**
 - Gree Modbus Gateway module
 - RS485 to USB/Ethernet adapter
-- Connection to CN6 port on indoor unit
+- Connection to CN6 port on outdoor condenser unit
 
 **Expected Capabilities:**
 - Full system control (power, modes, setpoints)
@@ -77,7 +80,7 @@ Connects to HVAC unit on port 23 and displays live telemetry data. The hostname/
 - **Protocol**: Custom GREE UART (7E 7E header, 40-byte control, 255-byte status)
 
 ### Planned Modbus Configuration
-- **Interface**: CN6 port on indoor unit
+- **Interface**: CN6 port on outdoor condenser unit
 - **Protocol**: Modbus RTU over RS485
 - **Gateway**: Gree Modbus Gateway module
 - **Integration**: Python modbus-tk library
@@ -94,7 +97,7 @@ The system provides accurate real-time monitoring:
 - **Vapor Line**: Position 22 (°F direct)
 - **Liquid Line**: Position 56 (scaled)
 - **Outdoor Coil**: Position 25 (°C, Bekmansurov encoding)
-- **Indoor Heat Exchanger**: Position 64 (°C)
+- **Water Heat Exchanger**: Position 64 (°C) - Brazed plate heat exchanger
 
 ## Development Timeline
 
