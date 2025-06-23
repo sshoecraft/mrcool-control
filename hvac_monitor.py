@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 GREE HVAC Real-Time Control Monitor
-Displays decoded control values from AC1 unit packets
+Displays decoded control values from AC unit packets
 """
 
 import socket
@@ -320,8 +320,17 @@ class GreeHVACMonitor:
             self.socket.close()
 
 def main():
+    # Check for command line arguments
+    if len(sys.argv) > 2:
+        print("Usage: hvac_monitor.py [hostname/ip]")
+        print("Default: 192.168.1.188")
+        sys.exit(1)
+    
+    # Use provided hostname or default
+    host = sys.argv[1] if len(sys.argv) > 1 else '192.168.1.188'
+    
     try:
-        monitor = GreeHVACMonitor()
+        monitor = GreeHVACMonitor(host=host)
         
         if not monitor.connect():
             return

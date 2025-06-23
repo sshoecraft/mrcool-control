@@ -60,10 +60,15 @@ The only maintained script in this repository. Provides comprehensive real-time 
 
 **Usage:**
 ```bash
+# Default connection (192.168.1.188)
 python3 hvac_monitor.py
+
+# Custom hostname/IP
+python3 hvac_monitor.py 192.168.1.100
+python3 hvac_monitor.py ac1.localdomain
 ```
 
-Connects to AC1 unit at 192.168.1.188:23 and displays live telemetry data.
+Connects to HVAC unit on port 23 and displays live telemetry data.
 
 ## Hardware Setup
 
