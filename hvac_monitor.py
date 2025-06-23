@@ -10,7 +10,7 @@ from datetime import datetime
 import sys
 
 class GreeHVACMonitor:
-    def __init__(self, host='192.168.1.188', port=23):
+    def __init__(self, host, port=23):
         self.host = host
         self.port = port
         self.socket = None
@@ -321,13 +321,13 @@ class GreeHVACMonitor:
 
 def main():
     # Check for command line arguments
-    if len(sys.argv) > 2:
-        print("Usage: hvac_monitor.py [hostname/ip]")
-        print("Default: 192.168.1.188")
+    if len(sys.argv) != 2:
+        print("Usage: hvac_monitor.py <hostname/ip>")
+        print("Example: hvac_monitor.py ac1.localdomain")
         sys.exit(1)
     
-    # Use provided hostname or default
-    host = sys.argv[1] if len(sys.argv) > 1 else '192.168.1.188'
+    # Get hostname from command line
+    host = sys.argv[1]
     
     try:
         monitor = GreeHVACMonitor(host=host)

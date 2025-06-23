@@ -60,21 +60,20 @@ The only maintained script in this repository. Provides comprehensive real-time 
 
 **Usage:**
 ```bash
-# Default connection (192.168.1.188)
-python3 hvac_monitor.py
+python3 hvac_monitor.py <hostname/ip>
 
-# Custom hostname/IP
-python3 hvac_monitor.py 192.168.1.100
+# Examples:
 python3 hvac_monitor.py ac1.localdomain
+python3 hvac_monitor.py hvac.local
 ```
 
-Connects to HVAC unit on port 23 and displays live telemetry data.
+Connects to HVAC unit on port 23 and displays live telemetry data. The hostname/IP argument is required.
 
 ## Hardware Setup
 
 ### Current Configuration
 - **Serial**: `/dev/serial0` (9600 baud, 8N1)
-- **Network Monitoring**: Port 23 on AC1 unit (192.168.1.188)
+- **Network Monitoring**: Port 23 on HVAC unit
 - **Protocol**: Custom GREE UART (7E 7E header, 40-byte control, 255-byte status)
 
 ### Planned Modbus Configuration
