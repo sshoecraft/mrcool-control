@@ -1,174 +1,109 @@
-# Mr Cool Control - Complete HVAC Control System
+# HVAC Control System - Mr Cool MDUO18060
 
-*Formerly: GREE HVAC Protocol - Updated with Bidirectional Control Discovery*
+## Current Status: UART Control Limitation Discovered
 
-## Major Update: Bidirectional UART Control Confirmed
+After extensive reverse engineering and protocol analysis, we have determined that **direct UART control via the COMM port is not feasible** for full system control of the Mr Cool MDUO18060 heat pump.
 
-**BREAKING**: The Mr Cool MDUO18060 system supports **full bidirectional control** via UART, not just monitoring.
+### What Works via UART
+- ✅ **Complete monitoring and telemetry** via `hvac_monitor.py`
+- ✅ **Real-time pressure readings** (vapor/liquid lines)
+- ✅ **Temperature monitoring** (refrigerant lines, heat exchangers)
+- ✅ **System status and performance metrics**
+- ✅ **Flow control analysis and optimization detection**
 
-### Updated Protocol Understanding
+### What Doesn't Work via UART
+- ❌ **Direct system control commands** (power, mode, setpoint changes)
+- ❌ **Compressor speed control**
+- ❌ **Refrigerant flow valve control**
+- ❌ **Performance mode switching**
 
-Your system actually implements **dual packet formats** on the same UART connection:
+## New Control Strategy: Modbus Gateway Integration
 
-| Direction | Format | Size | Purpose | Example |
-|-----------|--------|------|---------|---------| 
-| **Query** → AC | `7e7e 02 02 [cs]` | 5 bytes | Request status | `7e7e020204` |
-| **Status** ← AC | `7e7e ff e0 [data]` | 255 bytes | Status response | `7e7effe0013c30...` |
-| **Control** → AC | `7e7e 25 01 [data]` | 40 bytes | Control command | `7e7e2501010000...` |
+### Phase 1: Gree Modbus Gateway (Planned)
+We will acquire and integrate a **Gree Modbus Gateway** to connect to the **CN6 port** on the indoor unit for proper bidirectional control.
 
-## Key Control Scripts
+**Hardware Requirements:**
+- Gree Modbus Gateway module
+- RS485 to USB/Ethernet adapter
+- Connection to CN6 port on indoor unit
 
-### 🧠 Core Scripts - Ready to Deploy
+**Expected Capabilities:**
+- Full system control (power, modes, setpoints)
+- Advanced performance parameter adjustment
+- Integration with existing monitoring system
 
-- **`smart_max_performance.py`** - **★ PRIMARY CONTROL SCRIPT ★**
-  - Intelligently detects heat/cool mode via refrigerant temperature differential
-  - Sets aggressive setpoints: 18°C cooling / 30°C heating
-  - Maximizes compressor capacity, flow, and fan speed automatically
-  - **Currently running on production system**
+### Phase 2: Physical Override System (Interim Solution)
 
-- **`enhanced_gree_controller.py`** - Complete interactive control interface
-  - Full bidirectional control with safety checks
-  - Interactive menu system for manual operation
-  - Real-time status monitoring and display
+While waiting for Modbus hardware, we will implement physical sensor manipulation:
 
-- **`enhanced_gree_collector.py`** - Advanced data collection and monitoring
-  - Comprehensive protocol analysis using all research findings
-  - CSV logging with temperature correlations
-  - Real-time performance tracking
+#### Vapor Line Heat Tape
+- **Purpose**: Artificially raise vapor line temperature
+- **Method**: Controlled heat tape wrapped around vapor line sensor
+- **Goal**: Trick system into higher performance mode by simulating low refrigerant flow
 
-- **`chiller_mode_controller.py`** - Maximum capacity chiller operation
-  - Forces sustained maximum performance with safety monitoring
-  - Continuous operation with automatic safety cutoffs
-  - Pure UART-based control and monitoring
+#### Ambient Temperature Control
+- **Target**: Maintain 72°F at ambient temperature sensor
+- **Method**: Peltier cooling module with precise temperature control
+- **Purpose**: Override outdoor temperature readings to force optimal operating conditions
 
-## Research Integration
+## Current Scripts and Capabilities
 
-This documentation now incorporates findings from:
+### Production Monitoring
+- **`hvac_monitor.py`** - Real-time system monitoring with pressure/temperature display
+- **`enhanced_gree_collector.py`** - Data logging and CSV export
+- **`smart_max_performance.py`** - Performance optimization detection
 
-### 1. ✅ Bekmansurov Research (Original Foundation)
-- **Repository**: bekmansurov/gree-hvac-protocol
-- **Contribution**: UART protocol structure, temperature encoding (°C - 16)
-- **Issue #6**: Swing mode encoding and packet structure updates
-- **Validation**: ✅ Confirmed on Mr Cool system
+### Protocol Analysis Tools
+- **`packet_logger.py`** - Raw packet capture
+- **`analyze_packet_log.py`** - Protocol analysis and decoding
+- **`diagnostics.py`** - System troubleshooting
 
-### 2. ✅ evilwombat WiFi Protocol (Control Methods)
-- **Repository**: evilwombat/GreeControl
-- **Contribution**: Complete control implementation, 40-byte control packets
-- **Features**: Temperature, mode, fan, timer, swing control
-- **Adaptation**: ✅ WiFi control format works on UART
+### Testing Framework
+- **`test_performance_controls.py`** - Performance parameter validation
+- **`test_persistence.py`** - Control persistence testing
 
-### 3. ✅ Daikin Analysis (Bit-Field Mapping)
-- **Source**: GitHub issue #3 (Daikin FTKS18VL216A)
-- **Contribution**: Detailed bit-field structure documentation
-- **Fields**: Power, mode, fan_speed, set_temp, turbo, xfan, display_light
-- **Validation**: ✅ Perfect correlation with Mr Cool system
+## Hardware Setup
 
-## Quick Start
+### Current Configuration
+- **Serial**: `/dev/serial0` (9600 baud, 8N1)
+- **Network Monitoring**: Port 23 on AC1 unit (192.168.1.188)
+- **Protocol**: Custom GREE UART (7E 7E header, 40-byte control, 255-byte status)
 
-### Installation
-```bash
-git clone https://github.com/sshoecraft/mrcool-control.git
-cd mrcool-control
-./setup.sh
-```
+### Planned Modbus Configuration
+- **Interface**: CN6 port on indoor unit
+- **Protocol**: Modbus RTU over RS485
+- **Gateway**: Gree Modbus Gateway module
+- **Integration**: Python modbus-tk library
 
-### Basic Usage
-```bash
-# Run smart max performance (production script)
-python3 smart_max_performance.py
+## Pressure and Temperature Monitoring
 
-# Interactive control interface
-python3 enhanced_gree_controller.py
+The system provides accurate real-time monitoring:
 
-# Start data collection
-python3 enhanced_gree_collector.py --duration 60
+### Pressure Sensors
+- **Vapor Line**: Position 16 (bar×10 encoding) - Typical: ~112 PSI
+- **Liquid Line**: Positions 60-61 (kPa little-endian) - Typical: ~260-285 PSI
 
-# Check system status only
-python3 enhanced_gree_controller.py --status
-```
+### Temperature Sensors
+- **Vapor Line**: Position 22 (°F direct)
+- **Liquid Line**: Position 56 (scaled)
+- **Outdoor Coil**: Position 25 (°C, Bekmansurov encoding)
+- **Indoor Heat Exchanger**: Position 64 (°C)
 
-## Available Tools
+## Development Timeline
 
-### 🎯 Production Control Scripts
-- **`smart_max_performance.py`** - Smart mode detection and optimization
-- **`enhanced_gree_controller.py`** - Complete interactive control
-- **`enhanced_gree_collector.py`** - Advanced monitoring and logging
-- **`chiller_mode_controller.py`** - Maximum capacity operation
+1. **Immediate** - Physical sensor override implementation
+2. **Short-term** - Gree Modbus Gateway procurement and integration
+3. **Medium-term** - Complete control system integration
+4. **Long-term** - Automated optimization with both monitoring and control
 
-### 🔧 Development & Testing Tools
-- **`tools/comprehensive_decoder.py`** - Multi-source protocol decoder
-- **`tools/packet_analyzer.py`** - Interactive packet analysis
-- **`tools/refrigerant_control_test.py`** - Advanced refrigerant circuit testing
-- **`tools/uart_control_test.py`** - Basic bidirectional control testing
-- **`tools/smart_max_performance.py`** - Maximum performance optimization
+## Safety and Compliance
 
-## Features
-
-### ✅ Complete HVAC Control
-- **Power control** - System on/off
-- **Operating modes** - Auto/Cool/Heat/Fan/Dry  
-- **Temperature control** - Setpoint adjustment
-- **Fan speed control** - 0-5 speed levels
-- **Advanced features** - Turbo, X-Fan, display control
-
-### ✅ Advanced Refrigerant Circuit Control
-- **Compressor capacity modulation** - Variable speed control
-- **Refrigerant flow control** - Electronic expansion valve
-- **Heat/Cool mode switching** - Reversing valve operation
-- **Real-time monitoring** - Operational status feedback
-
-### ✅ Smart Mode Detection
-- **Automatic heat/cool detection** - via refrigerant temperature differential
-- **Intelligent setpoint optimization** - aggressive but safe temperature targets
-- **Maximum performance activation** - compressor, flow, and fan optimization
-- **Production-ready automation** - suitable for continuous operation
-
-## Hardware Compatibility
-
-### Supported Systems
-- **Mr Cool MDUO18060** (primary tested system)
-- **Gree FLEXX60HP230V1AO** (rebadged version)
-- **Other Gree systems** with compatible UART protocol
-
-### Connection Requirements
-- **Serial Port**: `/dev/serial0` or similar UART interface
-- **Settings**: 9600 baud, 8N1
-- **Access**: Read/write permissions required
-
-## Safety Features
-
-- **Parameter validation** - Range checking for all controls
-- **Confirmation prompts** - For potentially disruptive operations
-- **Error handling** - Comprehensive exception management
-- **System monitoring** - Continuous status verification
-- **Temperature differential analysis** - Smart mode detection prevents conflicts
-
-## Documentation
-
-- **[INSTALL.md](INSTALL.md)** - Complete installation and deployment guide
-- **[REFRIGERANT_CONTROL_DISCOVERY.md](REFRIGERANT_CONTROL_DISCOVERY.md)** - Advanced control documentation
-- **[packet-analysis.md](packet-analysis.md)** - Protocol structure details
-- **[RESEARCH_TASKS.md](RESEARCH_TASKS.md)** - Future development roadmap
-
-## Contributing
-
-This project builds on research from:
-- **Bekmansurov**: Original UART protocol reverse engineering
-- **evilwombat**: WiFi control implementation
-- **Daikin community**: Bit-field analysis
-
-Contributions welcome for:
-- Additional system testing and validation
-- Protocol extension documentation
-- Integration development
-- Bug fixes and improvements
-
-## References
-
-- [Bekmansurov GREE HVAC Protocol](https://github.com/bekmansurov/gree-hvac-protocol)
-- [evilwombat GreeControl](https://github.com/evilwombat/GreeControl)
-- [Daikin Protocol Analysis](https://github.com/bekmansurov/gree-hvac-protocol/issues/3)
+All modifications maintain system safety limits:
+- Maximum liquid temperature: 65°C
+- Minimum vapor temperature: -10°C
+- Maximum temperature differential: 60°C
+- Pressure monitoring with automatic safety shutdowns
 
 ---
 
-**Status**: Complete bidirectional control system ready for production use with smart optimization scripts.
+*This project represents comprehensive reverse engineering of the GREE HVAC protocol with full monitoring capabilities and planned expansion to complete control via Modbus integration.*
